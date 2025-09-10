@@ -8,16 +8,21 @@ import io.xico26.spotifum_neo.entity.music.Music;
 import io.xico26.spotifum_neo.entity.playlist.Playlist;
 import io.xico26.spotifum_neo.exceptions.AlbumNotFoundException;
 import io.xico26.spotifum_neo.exceptions.NameAlreadyUsedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class MusicService {
     private final MusicDAO musicDAO;
     private AlbumService albumService;
     private LibraryService libraryService;
     private PlaylistService playlistService;
 
+    @Autowired
     public MusicService(MusicDAO musicDAO, AlbumService albumService) {
         this.musicDAO = musicDAO;
         this.albumService = albumService;
@@ -43,10 +48,12 @@ public class MusicService {
         return musicDAO.findAll();
     }
 
+    @Transactional
     public void save(Music music) {
         musicDAO.save(music);
     }
 
+    @Transactional
     public void delete(Music music) {
         // Remove from all playlists
         List<Playlist> playlists = playlistService.findAllWithMusic(music);
@@ -92,6 +99,7 @@ public class MusicService {
         return musics;
     }
 
+    @Transactional
     public void makeExplicit (Music music) {
         ExplicitMusic newMusic = new ExplicitMusic(music);
 
@@ -107,6 +115,7 @@ public class MusicService {
         albumService.save(album);
     }
 
+    @Transactional
     public void makeNormal (ExplicitMusic music) {
         Music newMusic = new Music(music);
 

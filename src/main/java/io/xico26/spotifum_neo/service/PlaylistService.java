@@ -8,7 +8,9 @@ import io.xico26.spotifum_neo.entity.music.Music;
 import io.xico26.spotifum_neo.entity.playlist.*;
 import io.xico26.spotifum_neo.exceptions.NameAlreadyUsedException;
 import io.xico26.spotifum_neo.exceptions.TooFewMusicsException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ public class PlaylistService {
     private final AlbumService albumService;
     private static final Random random = new Random();
 
+    @Autowired
     public PlaylistService(PlaylistDAO playlistDAO, LibraryService libraryService, ListeningRecordService listeningRecordService, MusicService musicService, AlbumService albumService) {
         this.playlistDAO = playlistDAO;
         this.libraryService = libraryService;
@@ -48,10 +51,12 @@ public class PlaylistService {
         return playlistDAO.findAll();
     }
 
+    @Transactional
     public void save(Playlist playlist) {
         playlistDAO.save(playlist);
     }
 
+    @Transactional
     public void delete(Playlist playlist) {
         // remove from libraries
         List<Library> libraries = libraryService.findAllWithPlaylist(playlist);
@@ -63,6 +68,7 @@ public class PlaylistService {
         playlistDAO.delete(playlist);
     }
 
+    @Transactional
     public void update(Playlist playlist) {
         playlistDAO.update(playlist);
     }
@@ -130,7 +136,7 @@ public class PlaylistService {
         return playlist.getMusics().stream().anyMatch(m -> m.equals(music));
     }
 
-    public void toggleVisbility(Playlist playlist) {
+    public void toggleVisibility(Playlist playlist) {
         playlist.setIsPublic(!playlist.isPublic());
         save(playlist);
     }
@@ -141,7 +147,7 @@ public class PlaylistService {
 
         int totalMusics = musicService.getTotalNumberOfMusics();
 
-        if (totalMusics == 0) {
+        if (totalMusics == 0 || albums.isEmpty()) {
             throw new TooFewMusicsException("There aren't enough musics in the database!");
         }
         if (numMusics > totalMusics) {

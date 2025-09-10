@@ -9,12 +9,17 @@ import io.xico26.spotifum_neo.entity.playlist.Playlist;
 import io.xico26.spotifum_neo.exceptions.AlbumAlreadySavedException;
 import io.xico26.spotifum_neo.exceptions.MusicAlreadySavedException;
 import io.xico26.spotifum_neo.exceptions.PlaylistAlreadySavedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class LibraryService {
     private final LibraryDAO libraryDAO;
 
+    @Autowired
     public LibraryService(LibraryDAO libraryDAO) {
         this.libraryDAO = libraryDAO;
     }
@@ -28,6 +33,7 @@ public class LibraryService {
         return library.getMusics().contains(m);
     }
 
+    @Transactional
     public void addMusic (User u, Music m) {
         Library library = getUserLibrary(u);
         if (!library.getMusics().contains(m)) {
@@ -38,6 +44,7 @@ public class LibraryService {
         }
     }
 
+    @Transactional
     public void removeMusic (User u, Music m) {
         Library library = getUserLibrary(u);
         if (library.getMusics().contains(m)) {
@@ -46,6 +53,7 @@ public class LibraryService {
         }
     }
 
+    @Transactional
     public void addAlbum(User user, Album album) {
         Library library = libraryDAO.findByUser(user);
         if (!library.getAlbums().contains(album)) {
@@ -56,6 +64,7 @@ public class LibraryService {
         }
     }
 
+    @Transactional
     public void removeAlbum(User user, Album album) {
         Library library = libraryDAO.findByUser(user);
         if (library.getAlbums().contains(album)) {
@@ -69,6 +78,7 @@ public class LibraryService {
         return library.getAlbums().contains(album);
     }
 
+    @Transactional
     public void addPlaylist(User user, Playlist playlist) {
         Library library = libraryDAO.findByUser(user);
         if (!library.getPlaylists().contains(playlist)) {
@@ -79,6 +89,7 @@ public class LibraryService {
         }
     }
 
+    @Transactional
     public void removePlaylist(User user, Playlist playlist) {
         Library library = libraryDAO.findByUser(user);
         if (library.getPlaylists().contains(playlist)) {
@@ -97,6 +108,7 @@ public class LibraryService {
         return library.getPlaylists().stream().anyMatch(p -> p.getName().equals(name));
     }
 
+    @Transactional
     public void removePlaylistByName (User u, String name) {
         Library library = getUserLibrary(u);
         if (hasPlaylistByName(u, name)) {
@@ -113,6 +125,7 @@ public class LibraryService {
         return libraryDAO.findAllWithPlaylist(playlist);
     }
 
+    @Transactional
     public void save (Library library) {
         libraryDAO.save(library);
     }

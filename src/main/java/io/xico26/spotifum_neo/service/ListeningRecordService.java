@@ -6,23 +6,30 @@ import io.xico26.spotifum_neo.entity.User;
 import io.xico26.spotifum_neo.entity.music.Music;
 import io.xico26.spotifum_neo.entity.plan.ISubscriptionPlan;
 import io.xico26.spotifum_neo.entity.plan.SubscriptionPlanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class ListeningRecordService {
     private final ListeningRecordDAO lrDAO;
     private final UserService userService;
 
+    @Autowired
     public ListeningRecordService(ListeningRecordDAO lrDAO, UserService userService) {
         this.lrDAO = lrDAO;
         this.userService = userService;
     }
 
+    @Transactional
     public void clearHistory(User user) {
         lrDAO.deleteByUser(user);
     }
 
+    @Transactional
     public void registerMusicPlay(User u, Music m) {
         ISubscriptionPlan plan = SubscriptionPlanFactory.createPlan(u.getSubscriptionPlan());
         plan.addPoints(m, u);

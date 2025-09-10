@@ -6,13 +6,18 @@ import io.xico26.spotifum_neo.entity.Artist;
 import io.xico26.spotifum_neo.entity.music.Music;
 import io.xico26.spotifum_neo.exceptions.AlbumNotFoundException;
 import io.xico26.spotifum_neo.exceptions.MusicAlreadySavedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class AlbumService {
     private final AlbumDAO albumDAO;
     private final ArtistService artistService;
 
+    @Autowired
     public AlbumService(AlbumDAO albumDAO, ArtistService artistService) {
         this.albumDAO = albumDAO;
         this.artistService = artistService;
@@ -34,10 +39,12 @@ public class AlbumService {
         return albumDAO.findByArtist(artist);
     }
 
+    @Transactional
     public void save (Album album) {
         albumDAO.save(album);
     }
 
+    @Transactional
     public void delete (Album album) {
         albumDAO.delete(album);
     }
@@ -55,6 +62,7 @@ public class AlbumService {
         return album.getMusics().stream().anyMatch(m -> m.getId() == musicId);
     }
 
+    @Transactional
     public void addMusic (int albumId, Music m) {
         Album album = albumDAO.findById(albumId);
         if (album == null) {
@@ -69,6 +77,7 @@ public class AlbumService {
         albumDAO.update(album);
     }
 
+    @Transactional
     public void removeMusic (int albumId, int musicId) {
         if (!hasMusic(albumId, musicId)) {
             return;
@@ -79,6 +88,7 @@ public class AlbumService {
         albumDAO.update(album);
     }
 
+    @Transactional
     public void createAlbum(String title, String artistName, String label, int year) {
         Artist artist = artistService.findByName(artistName);
         Album album = new Album(title, label, year, artist);

@@ -5,9 +5,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class AlbumDAOImpl implements AlbumDAO {
     private EntityManagerFactory emf;
 

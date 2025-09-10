@@ -2,14 +2,18 @@ package io.xico26.spotifum_neo.dao;
 
 import io.xico26.spotifum_neo.entity.User;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class UserDAOImpl implements UserDAO {
-    private EntityManagerFactory emf;
+    private EntityManager em;
 
-    public UserDAOImpl(EntityManagerFactory emf) {
-        this.emf = emf;
+    @Autowired
+    public UserDAOImpl(EntityManager em) {
+        this.em = em;
     }
 
     @Override

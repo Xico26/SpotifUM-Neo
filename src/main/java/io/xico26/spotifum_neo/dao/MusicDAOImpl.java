@@ -2,9 +2,11 @@ package io.xico26.spotifum_neo.dao;
 
 import io.xico26.spotifum_neo.entity.music.Music;
 import jakarta.persistence.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class MusicDAOImpl implements MusicDAO {
     private final EntityManagerFactory emf;
 
