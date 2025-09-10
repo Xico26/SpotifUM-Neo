@@ -77,7 +77,7 @@ public class MusicService {
         }
 
         // Delete music
-        musicDAO.delete(music);
+        musicDAO.deleteById(music.getId());
     }
 
     public int getTotalNumberOfMusics() {

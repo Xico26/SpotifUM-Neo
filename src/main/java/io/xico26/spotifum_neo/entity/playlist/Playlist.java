@@ -59,6 +59,10 @@ public abstract class Playlist {
         this.creator = p.getCreator();
     }
 
+    public int getId() {
+        return this.id;
+    }
+
     /**
      * Devolve o nome da playlist.
      * @return nome

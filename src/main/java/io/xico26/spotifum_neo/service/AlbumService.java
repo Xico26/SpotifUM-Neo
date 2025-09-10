@@ -46,7 +46,7 @@ public class AlbumService {
 
     @Transactional
     public void delete (Album album) {
-        albumDAO.delete(album);
+        albumDAO.deleteById(album.getId());
     }
 
     public boolean hasMusic(int albumId, int musicId) throws AlbumNotFoundException {

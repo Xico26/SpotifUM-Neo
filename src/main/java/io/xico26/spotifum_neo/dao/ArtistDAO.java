@@ -14,7 +14,7 @@ public interface ArtistDAO {
 
     void save(Artist a);
 
-    void delete(Artist a);
+    void deleteById(int id);
 
     void update(Artist a);
 

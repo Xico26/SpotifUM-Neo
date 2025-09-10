@@ -11,7 +11,7 @@ public interface AlbumDAO {
 
     void save(Album a);
 
-    void delete(Album a);
+    void deleteById(int id);
 
     void update(Album a);
 

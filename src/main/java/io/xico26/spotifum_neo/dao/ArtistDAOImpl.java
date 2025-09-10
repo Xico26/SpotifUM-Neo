@@ -6,103 +6,64 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public class ArtistDAOImpl implements ArtistDAO {
-    private final EntityManagerFactory emf;
+    private final EntityManager em;
 
-    public ArtistDAOImpl(EntityManagerFactory emf) {
-        this.emf = emf;
+    @Autowired
+    public ArtistDAOImpl(EntityManager em) {
+        this.em = em;
     }
 
     @Override
     public Artist findById(int id) {
-        EntityManager em = emf.createEntityManager();
-        Artist a = em.find(Artist.class, id);
-        em.close();
-        return a;
+        return em.find(Artist.class, id);
     }
 
     @Override
     public List<Artist> findAll() {
-        EntityManager em = emf.createEntityManager();
-        List<Artist> artists = em.createQuery("FROM Artist", Artist.class).getResultList();
-        em.close();
-        return artists;
+        return em.createQuery("FROM Artist", Artist.class).getResultList();
     }
 
     @Override
     public Artist findByName(String name) {
-        EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Artist> query = em.createQuery("SELECT a FROM Artist a WHERE LOWER(a.name) = :name", Artist.class);
             query.setParameter("name", name.toLowerCase());
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public void save(Artist a) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.persist(a);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-        }  finally {
-            em.close();
-        }
+        em.persist(a);
     }
 
     @Override
-    public void delete(Artist a) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.remove(a);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-        } finally {
-            em.close();
-        }
+    public void deleteById(int id) {
+        Artist a = em.find(Artist.class, id);
+        em.remove(a);
     }
 
     @Override
     public void update(Artist a) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.merge(a);
-            em.getTransaction().commit();
-        }  catch (Exception e) {
-            em.getTransaction().rollback();
-        } finally {
-            em.close();
-        }
+        em.merge(a);
     }
 
     @Override
     public void addAlbum (Artist artist, Album album) {
-        EntityManager em = emf.createEntityManager();
         try {
-            em.getTransaction().begin();
             Artist a = em.merge(artist);
             a.getAlbums().add(album);
-            em.getTransaction().commit();
         } catch (Exception e) {
-            em.getTransaction().rollback();
             throw e;
-        } finally {
-            em.close();
         }
     }
 }

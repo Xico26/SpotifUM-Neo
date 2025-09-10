@@ -37,7 +37,7 @@ public class ArtistService {
 
     @Transactional
     public void delete(Artist artist) {
-        artistDAO.delete(artist);
+        artistDAO.deleteById(artist.getId());
     }
 
     @Transactional

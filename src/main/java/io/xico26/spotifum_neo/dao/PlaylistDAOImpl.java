@@ -7,133 +7,76 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public class PlaylistDAOImpl implements PlaylistDAO {
-    private final EntityManagerFactory emf;
+    private final EntityManager em;
 
-    public PlaylistDAOImpl(EntityManagerFactory emf) {
-        this.emf = emf;
+    @Autowired
+    public PlaylistDAOImpl(EntityManager em) {
+        this.em = em;
     }
 
     @Override
     public Playlist findById(int id) {
-        EntityManager em = emf.createEntityManager();
         try {
             return em.find(Playlist.class, id);
         } catch (NoResultException e) {
             return null;
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public List<Playlist> findByUser(User user) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            TypedQuery<Playlist> query = em.createQuery("SELECT p FROM Playlist p WHERE p.creator = :user", Playlist.class);
-            query.setParameter("user", user);
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
+        TypedQuery<Playlist> query = em.createQuery("SELECT p FROM Playlist p WHERE p.creator = :user", Playlist.class);
+        query.setParameter("user", user);
+        return query.getResultList();
     }
 
     @Override
     public List<Playlist> findPublicPlaylists() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            TypedQuery<Playlist> query = em.createQuery("SELECT p FROM Playlist p WHERE p.isPublic = true", Playlist.class);
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
+        return em.createQuery("SELECT p FROM Playlist p WHERE p.isPublic = true", Playlist.class).getResultList();
     }
 
     @Override
     public List<Playlist> findByTitle(String title) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            TypedQuery<Playlist> query = em.createQuery("SELECT p FROM Playlist p WHERE LOWER(p.name) LIKE :title", Playlist.class);
-            query.setParameter("title", "%" + title.toLowerCase() + "%");
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
+        TypedQuery<Playlist> query = em.createQuery("SELECT p FROM Playlist p WHERE LOWER(p.name) LIKE :title", Playlist.class);
+        query.setParameter("title", "%" + title.toLowerCase() + "%");
+        return query.getResultList();
     }
 
     @Override
     public List<Playlist> findAll() {
-        EntityManager em = emf.createEntityManager();
-        List<Playlist> playlists = em.createQuery("FROM Playlist", Playlist.class).getResultList();
-        em.close();
-        return playlists;
+        return em.createQuery("FROM Playlist", Playlist.class).getResultList();
     }
 
     @Override
     public void save(Playlist p) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.persist(p);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-        }  finally {
-            em.close();
-        }
+        em.persist(p);
     }
 
     @Override
-    public void delete(Playlist p) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.remove(p);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-        } finally {
-            em.close();
+    public void deleteById(int id) {
+        Playlist playlist = em.find(Playlist.class, id);
+        if (playlist != null) {
+            em.remove(playlist);
         }
     }
 
     @Override
     public void update(Playlist p) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.merge(p);
-            em.getTransaction().commit();
-        }  catch (Exception e) {
-            em.getTransaction().rollback();
-        } finally {
-            em.close();
-        }
+        em.merge(p);
     }
 
     @Override
     public List<Playlist> findAllWithMusic(Music music) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            TypedQuery<Playlist> query = em.createQuery(
+        TypedQuery<Playlist> query = em.createQuery(
                     "SELECT p FROM Playlist p JOIN p.musics m WHERE m = :music", Playlist.class);
-            query.setParameter("music", music);
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
+        query.setParameter("music", music);
+        return query.getResultList();
     }
 }

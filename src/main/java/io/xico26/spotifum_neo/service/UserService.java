@@ -74,7 +74,7 @@ public class UserService {
             throw new UserNotFoundException("User not found!");
         }
 
-        userDAO.delete(u);
+        userDAO.deleteById(u.getId());
     }
 
     public ISubscriptionPlan getSubscriptionPlan (User u) {

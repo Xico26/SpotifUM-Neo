@@ -65,7 +65,7 @@ public class PlaylistService {
             libraryService.save(library);
         }
 
-        playlistDAO.delete(playlist);
+        playlistDAO.deleteById(playlist.getId());
     }
 
     @Transactional

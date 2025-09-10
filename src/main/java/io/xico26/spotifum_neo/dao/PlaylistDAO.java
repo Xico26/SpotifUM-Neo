@@ -15,7 +15,7 @@ public interface PlaylistDAO {
 
     void update(Playlist playlist);
 
-    void delete(Playlist playlist);
+    void deleteById(int id);
 
     List<Playlist> findByUser(User user);
 

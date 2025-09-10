@@ -11,7 +11,7 @@ public interface MusicDAO {
 
     void save(Music music);
 
-    void delete(Music music);
+    void deleteById(int id);
 
     int getMusicCount();
 
