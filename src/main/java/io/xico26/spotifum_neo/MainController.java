@@ -29,8 +29,6 @@ public class MainController {
 
     @RequestMapping("/")
     public String index (Model model) {
-        model.addAttribute("date", LocalDateTime.now());
-        model.addAttribute("user", userService.findByUsername("xico"));
         model.addAttribute("playlists", playlistService.findAll());
         model.addAttribute("albums", albumService.findAll());
         model.addAttribute("recentMusics", musicService.findAll());

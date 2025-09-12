@@ -50,7 +50,7 @@
                         <div class="card-body">
                             <h5 class="card-title" th:text="${album.name}">Album Name</h5>
                             <p class="card-text">Artist: <span th:text="${album.artist.name}">Artist Name</span></p>
-                            <a th:href="@{/album/{id}(id=${album.id})}" class="btn btn-primary">View Album</a>
+                            <a th:href="@{/albums/{id}(id=${album.id})}" class="btn btn-primary">View Album</a>
                         </div>
                     </div>
                 </div>
